@@ -1,0 +1,69 @@
+'MacroName:AuthOK
+'MacroDescription:Edit the authority record you are viewing, adding your symbol to the first series treatment fields.
+'Macro created by: Kathryn Lybarger, University of Kentucky Libraries.  CC-BY-SA.
+'Last updated: 2013-02-05
+
+Sub Main
+
+  'Change YOUNG to your symbol
+  MySymbol = "YOUNG"
+
+
+  On Error Goto ErrorHandler
+
+  Dim CS As Object
+  Set CS = CreateObject("Connex.Client")
+
+  if InStr(",3,4,18,", "," & CStr(CS.ItemType) & ",") then
+    'Viewing an authority record
+    if CS.GetField("130", 1, sName) then
+      'Viewing a series authority record
+
+      Warning = ""
+
+      for tag = 644 to 646  'loop through series treatment fields
+        if CS.GetField(tag, 1, field) then
+          'Append $5 symbol
+          if not CS.SetField(1, field + " " + Chr(223) + "5 " + MySymbol) then
+            Error 400
+          end if
+        else
+          Error 300
+Warned:
+        end if
+      next
+
+      if (Warning <> "") Then
+        msgbox Warning
+      end if
+    else
+      Error 200
+    end if
+
+  else
+    Error 100
+  end if
+
+  exit sub
+
+ErrorHandler:
+  select case Err
+    case 100
+      msgbox "Not viewing an authority record. Exiting..."
+      exit sub
+    case 200
+      msgbox "Not viewing a SERIES authority record. Exiting..."
+      exit sub
+    case 300
+      Warning = Warning + "WARNING: No " + CStr(tag) + " field" + chr(10)
+      Resume Warned
+    case 400
+      Warning = Warning + "WARNING: Failed to modify " + CStr(tag) + " field" + chr(10)
+      Resume Warned
+    case else
+      msgbox "Error. Exiting..."
+      exit sub
+  end select
+
+end sub
+
