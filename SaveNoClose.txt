@@ -22,11 +22,19 @@ Sub Main
        Error 100
    end select     
    
+   if (not CS.IsOnline) then
+     if (CS.Logon("","","")) then
+       msgbox "Logged in with default authorization."
+     else
+       Error 300
+     end if
+   end if
+   
    SaveFileNum = CS.SaveOnline  
    
    msgbox "Saved to " & SFname & " as Record #" & SaveFileNum
    CS.Search OnlineDB, "sf: " & SaveFileNum
-
+   
    exit sub
 
 ErrorHandler:
@@ -36,6 +44,9 @@ ErrorHandler:
        exit sub
      case 200
        msgbox "NOT SAVED. Use the menu option or Ctrl-Alt-V to save Constant Data"
+       exit sub
+     case 300
+       msgbox "Failed to login. Exiting..."
        exit sub
      case else
        msgbox "Unknown error. Exiting..."
