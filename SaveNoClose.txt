@@ -1,0 +1,45 @@
+'MacroName:SaveNoClose
+'MacroDescription:Save to the online save file without closing the record. Works for bibliographic and authority records.
+'Macro created by: Kathryn Lybarger, University of Kentucky Libraries. CC-BY-SA.
+'Last updated: 2013-03-27
+
+Sub Main
+
+   Dim CS As Object
+   Set CS = CreateObject("Connex.Client")
+   On Error Goto ErrorHandler
+   
+   select case CS.ItemType
+     case 0,1,17
+       OnlineDB = "BS"
+       SFname = "Online Bibliographic Save File"
+     case 3,4,18
+       OnlineDB = "AS"
+       SFname = "Online Authority Save File"
+     case 2,14,19,20
+       Error 200
+     case Else
+       Error 100
+   end select     
+   
+   SaveFileNum = CS.SaveOnline  
+   
+   msgbox "Saved to " & SFname & " as Record #" & SaveFileNum
+   CS.Search OnlineDB, "sf: " & SaveFileNum
+
+   exit sub
+
+ErrorHandler:
+   select case Err
+     case 100
+       msgbox "No Record to Save! [" & CS.ItemType & "]"
+       exit sub
+     case 200
+       msgbox "NOT SAVED. Use the menu option or Ctrl-Alt-V to save Constant Data"
+       exit sub
+     case else
+       msgbox "Unknown error. Exiting..."
+       exit sub
+   end select
+   
+End Sub
