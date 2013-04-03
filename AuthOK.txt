@@ -14,9 +14,9 @@ Sub Main
   Dim CS As Object
   Set CS = CreateObject("Connex.Client")
 
-  if InStr(",3,4,18,", "," & CStr(CS.ItemType) & ",") then
+   if (CS.ItemType = 3) or (CS.ItemType = 4) or (CS.ItemType = 14) then
     'Viewing an authority record
-    if CS.GetField("130", 1, sName) then
+    if CS.GetField("644", 1, sName) or CS.GetField("645", 1, sName) or CS.GetField("646", 1, sName) then
       'Viewing a series authority record
 
       Warning = ""
