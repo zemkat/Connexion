@@ -1,0 +1,45 @@
+'MacroName:Mark856Redirect
+'MacroDescription:Mark an 856 in an OCLC record as a redirected link, according to LCRI 9.7B
+'Macro created by: Kathryn Lybarger, University of Kentucky Libraries. CC-BY-SA.
+'Last updated: 2013-08-16
+
+Sub Main
+
+   Dim CS As Object
+   Set CS = CreateObject("Connex.Client")
+
+   Dim MonthName(1 to 12) as String
+   MonthName(1) = "January"
+   MonthName(2) = "February"
+   MonthName(3) = "March"
+   MonthName(4) = "April"
+   MonthName(5) = "May"
+   MonthName(6) = "June"
+   MonthName(7) = "July"
+   MonthName(8) = "August"
+   MonthName(9) = "September"
+   MonthName(10) = "October"
+   MonthName(11) = "November"
+   MonthName(12) = "December"
+
+   bool = CS.GetFieldLine(CS.CursorRow, sData)
+
+   if ((CS.ItemType <> 0) and (CS.ItemType <> 1) and (CS.ItemType <> 17)) then
+     msgbox "Not a bibliographic record!"
+     exit sub
+   end if
+   
+   if Left(sData,3) <> "856" then
+     msgbox "Field is not an 856!"
+     exit sub
+   end if
+
+   CS.CursorPosition = 7
+   CS.InsertText " "
+   CS.EndCell
+   mystr = " " & Chr(223) & "z This former electronic address redirects to current address when searched on " & MonthName(Month(Now)) & " " & Day(Now) & ", " & Year(Now)
+   CS.InsertText mystr
+   CS.HomeCell
+
+End Sub
+
