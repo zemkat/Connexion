@@ -1,0 +1,186 @@
+'MacroName:BlankRecord
+'MacroDescription:Create a new blank record for a resource type
+'Macro created by: Kathryn Lybarger, University of Kentucky Libraries. CC-BY-SA.
+'Last updated: 2018-09-06
+
+Sub Main
+
+   Dim CS As Object
+
+   Set delim = chr(223)
+   Set block = chr(254)
+   Dim symbol as String
+   symbol = "KUK"
+
+   Set CS = CreateObject("Connex.Client")
+   Dim mylist$(1 to 4)
+
+   mylist(1) = "Book"
+   mylist(2) = "Ebook"
+   mylist(3) = "DVD"
+   mylist(4) = "VHS"
+ '  mylist(5) = "Audio CD"
+
+   Begin Dialog UserDialog 120, 80, "Blank Record"
+ 
+    Text 8, 8, 100, 12, "Type of Resource:"
+    DropListBox 8, 20, 40, 100, mylist$, .type
+    
+    OKButton  80, 7, 20, 14
+    CancelButton  75, 25, 30, 14
+ 
+  End Dialog
+  Dim mydialog as UserDialog
+  
+  z = Dialog(mydialog)
+  
+  if z = 0 then
+    exit Sub
+  end if
+  
+   If CS.IsOnline = False Then
+     CS.Logon "","",""
+   End if
+  
+  ' #############################  BOOK  ##################################
+ if mydialog.type$ = 0 then
+  
+   bool = CS.OpenWorkform("bks")
+   max = 100
+   j = 0
+   do while (CS.DeleteFieldLine(1) and j < max)
+     j = j + 1
+   loop
+   
+   bool = CS.SetFixedField("Desc","i")
+   bool = CS.SetFixedField("ELvl","I")
+   bool = CS.SetFixedField("DtSt","s")
+   
+   bool = CS.AddField(1, "040  " & symbol & " " & delim & "b eng " & delim & "e rda " & delim & "c " & symbol)
+   CS.DeleteFieldLine(1)
+   bool = CS.AddField(1, "020  ")
+   bool = CS.AddField(1, "1001   " & delim & "e author.")
+   bool = CS.AddField(1, "24510 " & delim & "b  " & delim & "c ")
+   bool = CS.AddField(1, "250  ")
+   bool = CS.AddField(1, "264 1  " & delim & "b  " & delim & "c ")
+   bool = CS.AddField(2, "264 4" & delim & "c ")
+   bool = CS.AddField(1, "300   " & delim & "b  " & delim & "c ")
+   
+   bool = CS.AddField(1, "336  text " & delim & "b txt " & delim & "2 rdacontent")
+   bool = CS.AddField(1, "337  unmediated " & delim & "b n " & delim & "2 rdamedia")
+   bool = CS.AddField(1, "338  volume " & delim & "b nc " & delim & "2 rdacarrier")  
+
+  ' #############################  EBOOKS  ##################################
+ elseif mydialog.type$ = 1 then
+  
+   bool = CS.OpenWorkform("bks")
+   max = 100
+   j = 0
+   do while (CS.DeleteFieldLine(1) and j < max)
+     j = j + 1
+   loop
+   
+   bool = CS.SetFixedField("Desc","i")
+   bool = CS.SetFixedField("ELvl","I")
+   bool = CS.SetFixedField("DtSt","s")
+   bool = CS.SetFixedField("Form","o")
+
+   bool = CS.AddField(1, "006  m     o  d        ")
+   CS.DeleteFieldLine(1)
+   bool = CS.AddField(1, "007  c " & delim & "b r")   
+   bool = CS.AddField(1, "040  " & symbol & " " & delim & "b eng " & delim & "e rda " & delim & "c " & symbol)
+   bool = CS.AddField(1, "020  ")
+   bool = CS.AddField(1, "1001   " & delim & "e author.")
+   bool = CS.AddField(1, "24510 " & delim & "b  " & delim & "c ")
+   bool = CS.AddField(1, "250  ")
+   bool = CS.AddField(1, "264 1  " & delim & "b  " & delim & "c ")
+   bool = CS.AddField(2, "264 4" & delim & "c ")
+   bool = CS.AddField(1, "300  1 online resource () : " & delim & "b  ")
+   
+   bool = CS.AddField(1, "336  text " & delim & "b txt " & delim & "2 rdacontent")
+   bool = CS.AddField(1, "337  computer " & delim & "b c " & delim & "2 rdamedia")
+   bool = CS.AddField(1, "338  online resource " & delim & "b cr " & delim & "2 rdacarrier")  
+  
+  ' #############################  DVD  ##################################
+elseif mydialog.type$ = 2 then
+ 
+   bool = CS.OpenWorkform("vis")
+   max = 100
+   j = 0
+   do while (CS.DeleteFieldLine(1) and j < max)
+     j = j + 1
+   loop
+   
+   bool = CS.SetFixedField("Desc","i")
+   bool = CS.SetFixedField("ELvl","I")
+   bool = CS.SetFixedField("DtSt","s")
+   bool = CS.SetFixedField("TMat","v")
+   bool = CS.SetFixedField("Tech","l")
+
+   bool = CS.AddField(1, "007  v " & delim & "b d " & delim & "d c " & delim & "e v " & delim & "f a " & delim & "g i " & delim & "h z " & delim & "i s")
+   CS.DeleteFieldLine(1)
+   bool = CS.AddField(1, "040  " & symbol & " " & delim & "b eng " & delim & "e rda " & delim & "c " & symbol)
+
+   bool = CS.AddField(1, "0241 SCAN UPC")
+   bool = CS.AddField(1, "02842PUBLISHER NUMBER " & delim & "b PUBLISHER")
+   bool = CS.AddField(1, "24500 " & delim & "b  " & delim & "c ")
+   bool = CS.AddField(1, "264 1 " & delim & "b  " & delim & "c ")
+   bool = CS.AddField(2, "264 4" & delim & "c ")
+   bool = CS.AddField(1, "300  1 videodisc (XXX min.) : " & delim & "b sound, color ; " & delim & "c 4 3/4 in.")
+   
+   bool = CS.AddField(1, "336  two-dimensional moving image " & delim & "b tdi " & delim & "2 rdacontent")
+   bool = CS.AddField(1, "337  video " & delim & "b v " & delim & "2 rdamedia")
+   bool = CS.AddField(1, "338  videodisc " & delim & "b vd " & delim & "2 rdacarrier")  
+   bool = CS.AddField(1, "34X  RUN 34X MACRO")  
+   bool = CS.AddField(1, "538  DVD.")
+   bool = CS.AddField(1, "500  Wide screen (1.78:1).")
+   bool = CS.AddField(1, "5111 CAST")  
+   bool = CS.AddField(1, "5110 Performer, Narrator, and/or Presenter")
+   bool = CS.AddField(1, "508  CREW") 
+   bool = CS.AddField(1, "546  Soundtracks for the feature film in XXX, with optional subtitles in XXX.")
+  
+  ' #############################  VHS  ##################################
+elseif mydialog.type$ = 3 then
+ 
+   bool = CS.OpenWorkform("vis")
+   max = 100
+   j = 0
+   do while (CS.DeleteFieldLine(1) and j < max)
+     j = j + 1
+   loop
+   
+   bool = CS.SetFixedField("Desc","i")
+   bool = CS.SetFixedField("ELvl","I")
+   bool = CS.SetFixedField("DtSt","s")
+   bool = CS.SetFixedField("TMat","v")
+   bool = CS.SetFixedField("Tech","l")
+
+   bool = CS.AddField(1, "007  v " & delim & "b f " & delim & "d b " & delim & "e b " & delim & "f a " & delim & "g h " & delim & "h o " & delim & "i s")
+   CS.DeleteFieldLine(1)
+   bool = CS.AddField(1, "040  " & symbol & " " & delim & "b eng " & delim & "e rda " & delim & "c " & symbol)
+
+   bool = CS.AddField(1, "0241 SCAN UPC")
+   bool = CS.AddField(1, "02842PUBLISHER NUMBER " & delim & "b PUBLISHER")
+   bool = CS.AddField(1, "24500 " & delim & "b  " & delim & "c ")
+   bool = CS.AddField(1, "264 1 " & delim & "b  " & delim & "c ")
+   bool = CS.AddField(2, "264 4" & delim & "c ")
+   bool = CS.AddField(1, "300  1 videocassette (XXX min.) : " & delim & "b sound, color ; " & delim & "c 1/2 in.")
+   
+   bool = CS.AddField(1, "336  two-dimensional moving image " & delim & "b tdi " & delim & "2 rdacontent")
+   bool = CS.AddField(1, "337  video " & delim & "b v " & delim & "2 rdamedia")
+   bool = CS.AddField(1, "338  videodisc " & delim & "b vd " & delim & "2 rdacarrier")  
+   bool = CS.AddField(1, "34X  RUN 34X MACRO")  
+   bool = CS.AddField(1, "538  DVD.")
+   bool = CS.AddField(1, "500  Wide screen (1.78:1).")
+   bool = CS.AddField(1, "5111 CAST")  
+   bool = CS.AddField(1, "5110 Performer, Narrator, and/or Presenter")
+   bool = CS.AddField(1, "508  CREW") 
+   bool = CS.AddField(1, "546  Soundtracks for the feature film in XXX, with optional subtitles in XXX.")
+  
+  else
+    MsgBox mydialog.type
+  
+  end if
+  
+  end Sub
+

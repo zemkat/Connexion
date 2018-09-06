@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Date Range for OCLC Batch Search</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" integrity="sha256-JDBcnYeV19J14isGd3EtnsCQK05d8PczJ5+fvEvBJvI=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js" integrity="sha256-tW5LzEC7QjhG0CiAvxlseMTs2qJS7u3DRPauDjFJ3zo=" crossorigin="anonymous"></script>
+    <style> body { background-color: #8af; } </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card mt-4">
+        <div class="card-header">
+          <h1 class="card-title mb-0">Date Range batch search creator</h1>
+        </div>
+        <div class="card-body">
+          <form class="date-range-for-oclc-batch-search">
+            <div class="form-group row">
+              <label class="col-form-label col-md-2">Date range:</label>
+              <div class="input-daterange input-group col" id="datepicker">
+                <input type="text" class="input-sm form-control" name="beg" />
+                <span class="input-group-text">to</span>
+                <input type="text" class="input-sm form-control" name="end" />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="query" class="col-md-2 col-form-label">Search query:</label>
+              <input id="query" name="query" type="text" class="col form-control"/>
+            </div>
+            <div class="form-group row">
+              <div class="col-md-2 col-form-label">Batch Search Script</div>
+              <button class="col-md-3 btn btn-primary download">Download</button>
+            </div>
+            <div class="form-group">
+              <pre id="batchSearch"></pre>
+            </div>
+            <script>
+              function dateFromString( s ) {
+                const d = new Date();
+                d.setUTCHours(12);
+                d.setUTCMinutes(0);
+                d.setUTCSeconds(0);
+                d.setUTCMilliseconds(0);
+                d.setUTCFullYear( +s.substr(0,4) );
+                d.setUTCMonth(    +s.substr(4,2) - 1 );
+                d.setUTCDate(     +s.substr(6,2) );
+                return d;
+              }
+              function stringFromDate( d ) {
+                return (d.getUTCFullYear().toString() +
+                        (d.getUTCMonth()+101).toString().substring(1) +
+                        (d.getUTCDate()+100).toString().substring(1))
+              }
+              function doit() {
+                const form      = document.querySelector(".date-range-for-oclc-batch-search");
+                const beg       = dateFromString( form.querySelector( '[name="beg"]').value || stringFromDate(new Date(new Date() - 1000*60*60*24)));
+                const end       = dateFromString( form.querySelector( '[name="end"]').value || stringFromDate(new Date()));
+                const query     = form.querySelector('[name="query"]').value;
+                const output    = form.querySelector("#batchSearch");
+                const ret       = [];
+                for (let i = beg; i <= end; i = new Date( +i + 1000*60*60*24 ) ) {
+                  ret.push( "dm:" + stringFromDate(i) + " " + query );
+                }
+                output.innerHTML = ret.join("\n");
+                form.querySelector( '[name="beg"]'   ).value = stringFromDate( beg );
+                form.querySelector( '[name="end"]'   ).value = stringFromDate( end );
+                form.querySelector( '[name="query"]' ).value = query;
+              }
+              function download() {
+                doit();
+                const form      = document.querySelector(".date-range-for-oclc-batch-search");
+                const output    = form.querySelector("#batchSearch");
+                const blob      = new Blob([output.innerHTML.replace(/\n/g,"\r\n")], {type: 'text/plain'});
+                const filename  = 'batchSearch.txt';
+                if(window.navigator.msSaveBlob) {
+                  window.navigator.msSaveBlob(blob, filename);
+                } else {
+                  const a = document.createElement('a');
+                  a.href = URL.createObjectURL(blob);
+                  a.download = filename;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                }
+              }
+              function init() {
+                const form = document.querySelector(".date-range-for-oclc-batch-search");
+                try {
+                  const url = new URL(location.href);
+                  for( const [key,value] of url.searchParams.entries() ) {
+                    if (form[key] && form[key].tagName) {
+                        form[key].value = value;
+                    }
+                  }
+                } catch(x) {
+                }
+                if (form.querySelector( "[name=\"query\"]" ).value === "") {
+                  form.querySelector( "[name=\"query\"]" ).value = "kw:change ti:parable";
+                }
+                form.addEventListener( "input", doit );
+                form.addEventListener( "change", doit );
+                form.querySelector( 'button.download' ).addEventListener( "click", download );
+                doit();
+                const datepicker = $('.input-daterange').datepicker({ format: "yyyymmdd", multidate: 1 });
+                datepicker.children("input").datepicker("update");
+                datepicker.on("changeDate",doit);
+              }
+              init();
+            </script>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

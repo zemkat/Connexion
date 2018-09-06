@@ -1,0 +1,161 @@
+'MacroName:CutterHelper
+'MacroDescription:Insert a cutter based on the specified string
+'Macro created by: Kathryn Lybarger, University of Kentucky Libraries.  CC-BY-SA.
+'Last updated: 2018-08-30
+
+Sub Main
+
+   Dim CS As Object
+   Set CS = CreateObject("Connex.Client")
+   Dim mylist$(1 to 3)
+
+   mylist(1) = "2"
+   mylist(2) = "3"
+   mylist(3) = "4"
+
+   Begin Dialog UserDialog 120, 80, "Insert Cutter"
+ 
+    Text 8, 8, 100, 12, "Entry for Cutter:"
+    Textbox 8, 25, 50, 12, .cutter
+    DropListBox 8, 40, 40, 40, mylist$, .extent
+    
+    OKButton  80, 7, 20, 14
+    CancelButton  75, 25, 30, 14
+ 
+  End Dialog
+  Dim mydialog as UserDialog
+  
+  z = Dialog(mydialog)
+  
+  if z = 0 then
+    exit Sub
+  end if
+
+  
+  cutter$ = Ucase(mydialog.cutter$)
+  first$ = Mid(cutter$,1,1)
+  
+  bump = 0
+  
+  sec$ = mid(cutter$,2,1)
+
+  build$ = first$
+
+  ' starts with a vowel
+  if Instr("AEIOU",first$) then
+    if Instr("ABC",sec$) then
+      build$ = build$ + "2"
+    elseif InStr("DEFG",sec$) then
+      build$ = build$ + "3"
+    elseif InStr("HIJKLM",sec$) then
+      build$ = build$ + "4"
+    elseif InStr("NO",sec$) then
+      build$ = build$ + "5"
+    elseif InStr("PQ",sec$) then
+      build$ = build$ + "6"
+    elseif InStr("R",sec$) then
+      build$ = build$ + "7"
+    elseif InStr("ST",sec$) then
+      build$ = build$ + "8"
+    elseif InStr("UVWZYZ",sec$) then
+      build$ = build$ + "9"
+    end if
+    
+  ' starts with s
+  elseif Instr("S",first$) then
+    if Instr("AB",sec$) then
+      build$ = build$ + "2"
+    elseif InStr("C",sec$) then
+      third$ = mid(cutter$,3,1)
+      if (third$ = "H") then
+        bump = 1
+      end if
+      build$ = build$ + "3"
+    elseif InStr("DEF",sec$) then
+      build$ = build$ + "4"
+    elseif InStr("GHIJK",sec$) then
+      build$ = build$ + "5"
+    elseif InStr("LMNOPQ",sec$) then
+      build$ = build$ + "6"
+    elseif InStr("RST",sec$) then
+      build$ = build$ + "7"
+    elseif InStr("UV",sec$) then
+      build$ = build$ + "8"
+    elseif InStr("WXYZ",sec$) then
+      build$ = build$ + "9"
+    end if
+    
+  ' starts with q
+  elseif Instr("Q",first$) and (sec$ = "U") then
+    bump = 1
+    sec$ = mid(cutter$,3,1)
+    if Instr("ABC",sec$) then
+      build$ = build$ + "3"
+    elseif InStr("EFG",sec$) then
+      build$ = build$ + "4"
+    elseif InStr("HIJK",sec$) then
+      build$ = build$ + "5"
+    elseif InStr("LMNOPQ",sec$) then
+      build$ = build$ + "6"
+    elseif InStr("RS",sec$) then
+      build$ = build$ + "7"
+    elseif InStr("TUVW",sec$) then
+      build$ = build$ + "8"
+    elseif InStr("XYZ",sec$) then
+      build$ = build$ + "9"
+    end if
+
+  ' all other consonants, including Q
+  else
+     if Instr("ABC",sec$) then
+      build$ = build$ + "3"
+    elseif InStr("DEFG",sec$) then
+      build$ = build$ + "4"
+    elseif InStr("HIJKLM",sec$) then
+      build$ = build$ + "5"
+    elseif InStr("NO",sec$) then
+      build$ = build$ + "6"
+    elseif InStr("PQR",sec$) then
+      build$ = build$ + "7"
+    elseif InStr("STUV",sec$) then
+      build$ = build$ + "8"
+    elseif InStr("WXYZ",sec$) then
+      build$ = build$ + "9"
+    end if
+
+  end if
+
+  
+  for j = 0 to mydialog.extent
+    if 3+j+bump > Len(cutter$) then
+      goto done
+    end if
+    letter$ = mid(cutter$,3+j+bump,1)
+    if Instr("ABCD",letter$) then
+      build$ = build$ + "3"
+    elseif InStr("EFGH",letter$) then
+      build$ = build$ + "4"
+    elseif InStr("IJKL",letter$) then
+      build$ = build$ + "5"
+    elseif InStr("MNO",letter$) then
+      build$ = build$ + "6"
+    elseif InStr("PQRS",letter$) then
+      build$ = build$ + "7"
+    elseif InStr("TUV",letter$) then
+      build$ = build$ + "8"
+    elseif InStr("WXYZ",letter$) then
+      build$ = build$ + "9"
+    end if
+    
+      
+  next j  
+
+
+Done:
+'Un-comment this if you prefer a message box
+'MsgBox build
+
+'Comment this if you prefer not to have the cutter inserted into the record
+bool = CS.InsertText(build)
+
+End Sub
