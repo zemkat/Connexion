@@ -8,7 +8,7 @@ of WorldCat, repeated over time, and the resources added are
 likely to be older (making restriction by publication date
 less useful).
 
-1. Identify your query (without the date aspect)
+**1. Build your query (without the date aspect)**
 
  To run your query in batch, you will need to know how to enter
  it as a command line search using the
@@ -27,12 +27,12 @@ less useful).
  to retrieve only records with a given language of cataloging (note that 
  this is different from the language of the cataloged work).
 
-2. Create your batch query file
+**2. Create your batch query file**
 
  On the [Date Range Batch Search](https://ukcts.org/Connexion/DateRangeBatchSearch.html?beg=20180801&end=20180825&query=kw%3Achange+ti%3Aparable) page, 
  choose the start and end date for your date range from the date pickers:
 
- ![](images/DRBS-datepickers.PNG?raw=true)
+ ![](images/DRBS-DatePickers.PNG?raw=true)
 
  Enter the search query you created and notice that it create a list of
  queries, one for each date in your range (dm: is the date the MARC
@@ -44,19 +44,19 @@ less useful).
  as a text file. Make a note of where you save it -- you'll need
  this file in a few steps.
 
-3. Change (or confirm) your Connexion settings
+**3. Change (or confirm) your Connexion settings**
 
  In Connexion, click Options -> Preferences and go to the Batch tab.
  Set max number of records to 150 (the highest it will go).
 
  ![](images/DRBS-settings150.PNG?raw=true)
 
-4. Create a local file to hold the search results.
+**4. Create a local file to hold the search results.**
 
  In Connexion, open the local file manager with File -> Local File
  Manager...
 
- ![](images/DRBS-localfile.PNG?raw=true)
+ ![](images/DRBS-LocalFile.PNG?raw=true)
 
  Click "Create File..." and type in a name for your search results
  (like "Sanborn") and click "Open" to create the file. 
@@ -69,7 +69,7 @@ less useful).
 
  Click the Close button.
 
-5. Enter bibliographic search keys.
+**5. Enter bibliographic search keys.**
 
  In Connexion, click Batch -> Enter Bibliographic Search Keys...
 
@@ -85,14 +85,14 @@ less useful).
 
  Click Save and then Close to go to the next step.
 
-6. Run the batch query
+**6. Run the batch query**
 
  In Connexion, click Batch -> Process Batch...
 
  Check the box in the row with your file in it. It should already have a
  red checkmark next to it. 
 
- ![](images/DRBS-ProcessBatch2.PNG?raw=true)
+ ![](images/DRBS-ProcessBatch.PNG?raw=true)
 
  Check the box in the Process area for Online Searches. Click OK to
  start the search.
@@ -101,7 +101,7 @@ less useful).
  progress as the queries scroll by and it downloads the records it
  finds into your local save file.
 
-7. Address any errors
+**7. Address any errors**
 
  In the batch search results, most searches will likely result in
  a "No records found for your search" error -- this is expected!
