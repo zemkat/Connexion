@@ -29,7 +29,7 @@ less useful).
 
 ### 2. Create your batch query file
 
- On the [Date Range Batch Search](https://ukcts.org/Connexion/DateRangeBatchSearch.html?beg=20180801&end=20180825&query=kw%3Achange+ti%3Aparable) page, 
+ On the [Date Range Batch Search](https://ukcts.org/Connexion/DateRangeBatchSearch/DateRangeBatchSearch.html?beg=20180801&end=20180825&query=kw%3Achange+ti%3Aparable) page, 
  choose the start and end date for your date range from the date pickers:
 
  ![](images/DRBS-DatePickers.PNG?raw=true)
